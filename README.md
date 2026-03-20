@@ -1,52 +1,45 @@
----
-title: Agri-Demand Optimizer
-emoji: 🚜
-colorFrom: green
-colorTo: yellow
-sdk: docker
-pinned: false
----
+# Agri-Demand Optimizer
+### Supply Chain Intelligence for Kenyan Fresh Produce
 
-# Agri-Demand Optimizer: Predictive Supply Chain Intelligence
+A predictive analytics system designed to coordinate supply and demand in Kenyan fresh produce networks. The system predicts buyer orders weeks in advance, simulating up to a 28% reduction in post-harvest surplus waste.
 
-**High-Precision Analytics | 0.916 Private AUC | Agricultural Demand Forecasting**
-
-## Overview: Fresh Produce Supply Chain Optimization
-The Agri-Demand Optimizer is a systematic analytics platform designed for **Farm to Feed**, a Kenyan social enterprise focused on reducing post-harvest loss. By providing accurate demand projections for smallholder produce, the system enables the efficient diversion of surplus and underutilized crops to commercial kitchens, stabilizing farmer incomes and strengthening local food systems.
-
-### Core Objectives:
-1. **Demand Estimation:** 7-day and 14-day purchase likelihood classification.
-2. **Volume Optimization:** High-precision regression of unit requirements per SKU to minimize waste.
-
-## Performance Benchmarks
-The system utilizes a High-Precision Ensemble (V11) to ensure stability across varied market regimes:
-
-| Metric | Public Benchmark | Private Benchmark |
-| :--- | :--- | :--- |
-| **Purchase AUC** | 0.906 | **0.916** |
-| **Weighted Accuracy** | ~0.76 | **0.78 (Analytical Grade)** |
-
-## Technical Methodology
-
-### 1. Delta-Modeling Architecture
-To mitigate temporal drift and scale-variance, the system employs a Delta-Modeling approach. By predicting the demand variance (Delta) between sequential weeks rather than absolute values, the model achieved a **82% reduction in prediction error** during cross-validation.
-
-### 2. Multi-Threshold Risk Mitigation
-The system incorporates a triple-threshold probabilistic mask [0.3, 0.4, 0.5] to protect stakeholders from over-stocking perishables. Quantities are only allocated when the purchase signal demonstrates high statistical confidence, while low-confidence anomalies are automatically suppressed.
-
-### 3. Supply Chain Feature Engineering
-- **Velocity Metrics:** `qty_lag_1w` and multi-period rolling frequencies (4w, 8w, 12w).
-- **Inventory Anchors:** Category-level baseline statistics and SKU-specific historical volumetrics.
-
-## Project Structure
-- `app.py`: Project backend and analytical service.
-- `index.html`: Professional analytics dashboard.
-- `pipeline/`: End-to-end training and calibration scripts.
-- `models_v11_voting/`: Serialized High-Precision Ensemble weights (LFS).
-
-## Deployment
-Operational status on Hugging Face Spaces:
-- [Analytical Console](https://huggingface.co/spaces/okechobonyo/farm-to-feed-elite)
+This repository contains the delta-modeling ML pipeline (CatBoost + LightGBM ensemble), the local presentation server, and a Model Context Protocol (MCP) server that allows supply chain managers to interact with forecast data via natural language.
 
 ---
-**System Engineering:** Christopher Okech | Nairobi, Kenya
+
+## getting Started
+
+### Prerequisites
+- Python 3.10+
+- `pip`
+
+### 1. Installation
+Clone this repository and navigate to the application folder to install the required dependencies:
+
+```bash
+git clone https://github.com/okech-christopher/farm-to-feed-quant.git
+cd farm-to-feed-quant
+pip install -r requirements.txt
+```
+
+*(Note: Ensure you have `catboost`, `lightgbm`, `pandas`, `scikit-learn`, `flask` or `fastapi` depending on your wrapper, and `mcp` installed).*
+
+### 2. Running the System
+If you want to run the core predictive models and data transformations locally:
+```bash
+python main.py
+```
+*(Check the source scripts for CLI arguments on toggling between model training and inference modes).*
+
+### 3. Running the MCP Server (Conversational Analytics)
+The system includes an MCP (Model Context Protocol) server. Instead of forcing stakeholders to look at static SQL dashboards, this server exposes the forecast data to LLM agents, allowing users to ask questions like *"Which leafy greens have the highest demand next week?"*
+
+To start the MCP server:
+```bash
+python mcp_farm.py --port 8100
+```
+This server provides 6 tools for conversational querying: `list_products`, `list_buyers`, `query_demand`, `top_products`, `waste_estimate`, and `compare_weeks`.
+
+## Live Demo & Stakeholder Report
+- **Live Predictive Dashboard:** [Hugging Face Space](https://huggingface.co/spaces/okechobonyo/farm-to-feed-elite)
+- **Stakeholder Report:** [View the interactive report](https://okech-christopher.github.io/farm_report.html)
