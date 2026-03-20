@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elite Agri-Quant | Demand Scorer</title>
+    <!-- Google Fonts: Outfit for sleek headers, Inter for readability -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #166534; 
+            --secondary: #15803d;
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --accent: #2d5a27;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, .kicker { font-family: 'Outfit', sans-serif; }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 6rem 2rem; }
+
+        header { margin-bottom: 5rem; text-align: left; border-left: 2px solid var(--primary); padding-left: 2rem; }
+        .kicker { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--primary); letter-spacing: 0.1em; margin-bottom: 0.5rem; display: block; }
+        h1 { font-size: 2.75rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text-main); }
+        .subtitle { color: var(--text-muted); font-size: 1rem; margin-top: 0.5rem; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .input-guide { font-size: 0.75rem; color: var(--text-muted); opacity: 0.8; margin-bottom: 0.25rem; }
+
+        select, input {
+            padding: 0.75rem 0;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            background: transparent;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        select:focus, input:focus { outline: none; border-bottom-color: var(--primary); }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1.1rem 2.5rem;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 3.5rem;
+            transition: all 0.2s;
+            letter-spacing: 0.05em;
+        }
+
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        #result { margin-top: 6rem; display: none; border-top: 1px solid var(--border); padding-top: 5rem; animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .result-header { font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 3rem; letter-spacing: 0.1em; }
+        
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+        .stat-card h4 { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem; text-transform: uppercase; }
+        .stat-value { font-size: 4rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem; line-height: 1; font-family: 'Outfit', sans-serif; }
+        .stat-meta { font-size: 0.9rem; color: var(--text-muted); }
+        .stat-meta strong { color: var(--primary); font-weight: 700; }
+        .stat-desc { font-size: 0.8rem; color: var(--text-muted); margin-top: 1rem; line-height: 1.4; opacity: 0.7; }
+
+        .insight-section { margin-top: 5rem; padding: 2.5rem; background: var(--surface); border-radius: 8px; border: 1px solid var(--border); }
+        .insight-section h4 { font-size: 0.8rem; color: var(--primary); margin-bottom: 1rem; font-weight: 800; text-transform: uppercase; }
+        .insight-section p { font-size: 1rem; color: var(--text-main); font-style: italic; opacity: 0.85; line-height: 1.7; }
+
+        .guide-section { margin-top: 4rem; padding-top: 4rem; border-top: 1px dashed var(--border); }
+        .guide-title { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2rem; }
+        .guide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+        .guide-item h5 { font-size: 0.85rem; color: var(--text-main); margin-bottom: 0.5rem; }
+        .guide-item p { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+
+        footer { margin-top: 10rem; padding: 4rem 0; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Elite Agri-Quant</h1>
+            <p class="subtitle">Systematic demand forecasting for sustainable agricultural supply chains.</p>
+        </header>
+
+        <section class="form-section">
+            <form id="calcForm">
+                <div class="grid">
+                    <div class="form-group">
+                        <label>Customer Segment</label>
+                        <p class="input-guide">Business tier of the purchaser</p>
+                        <select name="customer_category">
+                            <option value="CUST_CAT_001">Tier 1 (Reliable)</option>
+                            <option value="CUST_CAT_002" selected>Tier 2 (Growth)</option>
+                            <option value="CUST_CAT_003">Tier 3 (New Market)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Inventory Grade</label>
+                        <p class="input-guide">Quality classification of the SKU</p>
+                        <select name="grade_name">
+                            <option value="GRADE_01" selected>Premium Grade 01</option>
+                            <option value="GRADE_02">Standard Grade 02</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Lag Weekly Quantity</label>
+                        <p class="input-guide">Units sold in the most recent week</p>
+                        <input type="number" name="qty_lag_1w" value="5.5" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label>Historical Peak</label>
+                        <p class="input-guide">Highest single-week volume (12w)</p>
+                        <input type="number" name="pair_max_qty" value="15.0" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label>Order Freq (4w)</label>
+                        <p class="input-guide">Active weeks out of the last 4</p>
+                        <input type="number" name="freq_4w" value="3">
+                    </div>
+                    <div class="form-group">
+                        <label>SKU Mean Qty</label>
+                        <p class="input-guide">Typical volume per order for this customer</p>
+                        <input type="number" name="pair_avg_qty" value="8.2" step="0.1">
+                    </div>
+                </div>
+                <input type="hidden" name="unit_name" value="UNIT_004">
+                <input type="hidden" name="freq_8w" value="6">
+                <input type="hidden" name="freq_12w" value="9">
+                <button type="submit">EXECUTE FORECAST</button>
+            </form>
+        </section>
+
+        <section id="result">
+            <div class="result-header">Forecast Outcome Matrix</div>
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <h4>7-Day Prediction</h4>
+                    <div class="stat-value" id="q1">0.0</div>
+                    <div class="stat-meta">Adjusted Units | <strong>Confidence: </strong><span id="p1">0%</span></div>
+                    <p class="stat-desc">Target volume for the immediate next 7-day cycle based on current velocity.</p>
+                </div>
+                <div class="stat-card">
+                    <h4>14-Day Outlook</h4>
+                    <div class="stat-value" id="q2">0.0</div>
+                    <div class="stat-meta">Adjusted Units | <strong>Confidence: </strong><span id="p2">0%</span></div>
+                    <p class="stat-desc">Projected requirements for the sub-sequential week, incorporating temporal drift.</p>
+                </div>
+            </div>
+            <div class="insight-section">
+                <h4>Architect Insight</h4>
+                <p id="insight">Model initializing validation protocols...</p>
+            </div>
+        </section>
+
+        <section class="guide-section">
+            <div class="guide-title">Parameter Guide</div>
+            <div class="guide-grid">
+                <div class="guide-item">
+                    <h5>Lag Weekly Quantity</h5>
+                    <p>The core momentum signal. Represents the raw units moved in the prior week. Higher values generally signal an upwards shift in baseline demand.</p>
+                </div>
+                <div class="guide-item">
+                    <h5>Confidence Score</h5>
+                    <p>Calculated via Triple-Threshold Voting. Anything above 70% is considered a 'High-Confidence' signal. Scores below 30% are automatically smoothed to prevent over-stocking risk.</p>
+                </div>
+                <div class="guide-item">
+                    <h5>Historical Peak</h5>
+                    <p>Serves as a logical anchor. The model uses this to prevent unrealistic spikes (hallucinations) that exceed 130% of your best historical performance.</p>
+                </div>
+                <div class="guide-item">
+                    <h5>Architect Insight</h5>
+                    <p>A qualitative summary generated by cross-referencing predicted deltas against customer risk profiles (e.g., Elite vs Mid-Tier demand regimes).</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            Christopher Okech | Secure Product Architect | Nairobi - Kenya
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('calcForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.innerText;
+            btn.innerText = "PROCESSING MATRIX...";
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('/predict_demand', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('q1').innerText = result.predictions.week_1.predicted_quantity.toFixed(1);
+                document.getElementById('p1').innerText = (result.predictions.week_1.purchase_probability * 100).toFixed(1) + "%";
+                document.getElementById('q2').innerText = result.predictions.week_2.predicted_quantity.toFixed(1);
+                document.getElementById('p2').innerText = (result.predictions.week_2.purchase_probability * 100).toFixed(1) + "%";
+                document.getElementById('insight').innerText = result.architect_insight;
+                
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            } catch (err) {
+                console.error(err);
+                alert("Quant engine error. Check local server (localhost:7860).");
+            } finally {
+                btn.innerText = originalText;
+            }
+        };
+    </script>
+</body>
+</html>
